@@ -3,8 +3,18 @@ name = "forms"
 version = "0.1.0"
 authors = ["realaravinth <realaravinth@batsense.net>"]
 edition = "2018"
+default-run = "forms"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "forms"
+path = "./src/main.rs"
+
+[[bin]]
+name = "test-util"
+path = "./src/test.rs"
+
 
 [dependencies]
 actix-web = "3.3.2"
@@ -27,7 +37,7 @@ log = "0.4.11"
 thiserror = "1"
 ammonia = "3"
 
-
+clap = "2.33"
 
 [dev-dependencies]
 serde_urlencoded = "0.7"

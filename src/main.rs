@@ -19,6 +19,7 @@ use std::env;
 use actix_files::Files;
 use actix_web::{middleware, App, HttpServer};
 use pretty_env_logger;
+use sqlx::PgPool;
 
 mod data;
 mod error;
@@ -30,8 +31,43 @@ use data::Data;
 #[cfg(not(tarpaulin_include))]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    use clap::{App, Arg};
+
     pretty_env_logger::init();
 
+    let matches = App::new("Shuttlecraft Forms")
+        .version("0.1")
+        .author("Aravinth Manivannan <realaravinth@batasense.net>")
+        .about("Web-based data aggregation")
+        .arg(
+            Arg::with_name("migrate")
+                .short("-m")
+                .long("--migrate")
+                .help("Database migrations")
+                .takes_value(false),
+        )
+        .get_matches();
+
+    if matches.is_present("migrate") {
+        migrate().await.unwrap();
+    } else {
+        start_server().await.unwrap();
+    }
+    Ok(())
+}
+
+pub async fn migrate() -> std::result::Result<(), sqlx::Error> {
+    let app_data = Data::new().await;
+
+    sqlx::query!( " CREATE TABLE responses ( name VARCHAR(64) NOT NULL, email_id VARCHAR(40) NOT NULL UNIQUE, registration_number VARCHAR(30) NOT NULL UNIQUE, uuid  VARCHAR(30) NOT NULL UNIQUE PRIMARY KEY
+) ",
+    )
+    .fetch_one(&app_data.db_pool)
+    .await?;
+    Ok(())
+}
+
+async fn start_server() -> std::io::Result<()> {
     let port: u32 = env::var("PORT")
         .unwrap_or({
             println!("PORT not set, defaulting to 3000");
