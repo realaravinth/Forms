@@ -736,6 +736,7 @@ name = "forms"
 version = "0.1.0"
 dependencies = [
  "actix-files",
+ "actix-rt",
  "actix-web",
  "ammonia",
  "log",
@@ -744,6 +745,7 @@ dependencies = [
  "sailfish-macros",
  "serde",
  "serde_json",
+ "serde_urlencoded",
  "sqlx",
  "thiserror",
  "uuid",

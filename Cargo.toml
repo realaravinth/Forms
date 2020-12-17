@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 actix-web = "3.3.2"
 actix-files = "0.4"
+actix-rt = "1"
 sailfish = "0.2"
 sailfish-macros = "0.2"
 
@@ -25,3 +26,8 @@ pretty_env_logger = "0.4.0"
 log = "0.4.11"
 thiserror = "1"
 ammonia = "3"
+
+
+
+[dev-dependencies]
+serde_urlencoded = "0.7"

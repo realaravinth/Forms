@@ -14,30 +14,46 @@
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+use std::env;
 
 use actix_files::Files;
 use actix_web::{middleware, App, HttpServer};
 use pretty_env_logger;
 
+mod data;
 mod error;
 mod form;
 mod routes;
+
+use data::Data;
 
 #[cfg(not(tarpaulin_include))]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     pretty_env_logger::init();
-    HttpServer::new(|| {
+
+    let port: u32 = env::var("PORT")
+        .unwrap_or({
+            println!("PORT not set, defaulting to 3000");
+            "3000".into()
+        })
+        .parse()
+        .expect("PORT should be an integer");
+
+    let app_data = Data::new().await;
+
+    HttpServer::new(move || {
         App::new()
             .configure(routes::services)
             .service(Files::new("/", "./static"))
+            .data(app_data.clone())
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
             .wrap(middleware::NormalizePath::new(
                 middleware::normalize::TrailingSlash::Trim,
             ))
     })
-    .bind("127.0.0.1:8080")?
+    .bind(format!("0.0.0.0:{}", port))?
     .run()
     .await
 }

@@ -41,6 +41,7 @@ input {
   display: block;
   width: 90%;
   height: 3.2rem;
+  font-size: 1.3rem;
 }
 
 input::placeholder {
