@@ -9,6 +9,8 @@
     <div class="box response">
         <h3>Thank you <%= name %>, your response is recorded</h3>
     </div>
+
+<% include!("./socials.stpl"); %>
 </div>
 
 <% include!("./bottom.stpl"); %>

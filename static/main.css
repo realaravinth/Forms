@@ -6,6 +6,13 @@
 
 a {
   display: inline-block;
+  text-decoration: non;
+  color: none;
+}
+
+a:visited {
+  text-decoration: none;
+  color: none;
 }
 
 * {
@@ -17,6 +24,11 @@ h1 {
   font-size: 3rem;
   display: block;
   width: 100%;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
 }
 
 label {
@@ -154,4 +166,16 @@ form,
 
 .response h3 {
   text-align: center;
+}
+
+#footer {
+  display: block;
+  flex-direction: row;
+  margin: auto;
+  position: absolute;
+  top: 97vh;
+  left: 50vw;
+}
+
+#footer {
 }
