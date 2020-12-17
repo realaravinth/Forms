@@ -50,6 +50,7 @@ async fn main() -> std::io::Result<()> {
 
     if let Err(val) = migrate(&data.db_pool).await {
         if let Error::Database(err) = val {
+            println!("{:#?}", err.code());
             if err.code() == Some(Cow::from("42P07")) {
                 let _ = drop(&data.db_pool).await;
                 let _ = migrate(&data.db_pool).await;
@@ -61,7 +62,7 @@ async fn main() -> std::io::Result<()> {
 }
 
 async fn migrate(pool: &PgPool) -> std::result::Result<(), sqlx::Error> {
-    sqlx::query!( " CREATE TABLE responses ( name VARCHAR(64) NOT NULL, email_id VARCHAR(40) NOT NULL UNIQUE, registration_number VARCHAR(30) NOT NULL UNIQUE, uuid  VARCHAR(30) NOT NULL UNIQUE PRIMARY KEY
+    sqlx::query!( " CREATE TABLE responses ( name VARCHAR(64) NOT NULL, email_id VARCHAR(40) NOT NULL UNIQUE, registration_number VARCHAR(30) NOT NULL UNIQUE, uuid  VARCHAR(90) NOT NULL UNIQUE PRIMARY KEY
 ) ",
     )
     .fetch_one(pool)
@@ -70,8 +71,9 @@ async fn migrate(pool: &PgPool) -> std::result::Result<(), sqlx::Error> {
 }
 
 async fn drop(pool: &PgPool) -> std::result::Result<(), sqlx::Error> {
-    sqlx::query!(" DROP TABLE responses")
+    sqlx::query!("DROP TABLE responses")
         .fetch_one(pool)
-        .await?;
+        .await
+        .unwrap();
     Ok(())
 }

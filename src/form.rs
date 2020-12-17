@@ -18,6 +18,7 @@
 use ammonia::clean;
 use sailfish_macros::*;
 use serde::{Deserialize, Serialize};
+use sqlx::PgPool;
 use uuid::Uuid;
 use validator::Validate;
 use validator_derive::Validate;
@@ -36,6 +37,18 @@ pub struct FormData {
 #[template(path = "response-saved.stpl")]
 pub struct Name<'a> {
     pub name: &'a str,
+}
+
+#[derive(Debug, Default, TemplateOnce)]
+#[template(path = "error.stpl")]
+pub struct ErrorMessage<'a> {
+    pub error: &'a str,
+}
+
+impl<'a> ErrorMessage<'a> {
+    pub fn new(error: &'a str) -> Self {
+        ErrorMessage { error }
+    }
 }
 
 impl<'a> Name<'a> {
@@ -98,6 +111,14 @@ impl Candidate {
 
     fn build(&mut self) -> Self {
         self.to_owned()
+    }
+
+    pub async fn save(&mut self, pool: &PgPool) -> ServiceResult<()> {
+        sqlx::query!( "INSERT INTO responses ( name , email_id, registration_number, uuid) VALUES ($1, $2, $3, $4) RETURNING uuid done ", self.name, self.email_id, self.registration_number, self.uuid.to_hyphenated().to_string())
+
+    .fetch_one(pool)
+    .await?;
+        Ok(())
     }
 }
 

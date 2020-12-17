@@ -26,11 +26,23 @@ struct ErrorToResponse {
 
 impl ResponseError for ServiceError {
     fn error_response(&self) -> HttpResponse {
-        actix_web::dev::HttpResponseBuilder::new(self.status_code())
-            .set_header(header::CONTENT_TYPE, "application/json; charset=UTF-8")
-            .json(ErrorToResponse {
-                error: self.to_string(),
-            })
+        use crate::form::ErrorMessage;
+        use sailfish::*;
+        use sailfish_macros::*;
+        let body = ErrorMessage::new(&self.to_string())
+            .render_once()
+            .map_err(|_| ServiceError::InternalServerError)
+            .unwrap();
+
+        HttpResponse::Ok()
+            .content_type("text/html; charset=utf-8")
+            .body(body)
+
+        //actix_web::dev::HttpResponseBuilder::new(self.status_code())
+        //    .set_header(header::CONTENT_TYPE, "application/json; charset=UTF-8")
+        //    .json(ErrorToResponse {
+        //        error: self.to_string(),
+        //    })
     }
 
     fn status_code(&self) -> StatusCode {
@@ -52,6 +64,20 @@ impl From<actix_web::error::Error> for ServiceError {
 impl From<ValidationErrors> for ServiceError {
     fn from(_: ValidationErrors) -> ServiceError {
         ServiceError::NotAnEmail
+    }
+}
+
+impl From<sqlx::Error> for ServiceError {
+    fn from(e: sqlx::Error) -> Self {
+        use sqlx::error::Error;
+        use std::borrow::Cow;
+        if let Error::Database(err) = e {
+            if err.code() == Some(Cow::from("23505")) {
+                return ServiceError::DuplicateResponse;
+            }
+        }
+
+        ServiceError::InternalServerError
     }
 }
 

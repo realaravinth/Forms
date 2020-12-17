@@ -15,7 +15,6 @@ path = "./src/main.rs"
 name = "test-util"
 path = "./src/test.rs"
 
-
 [dependencies]
 actix-web = "3.3.2"
 actix-files = "0.4"

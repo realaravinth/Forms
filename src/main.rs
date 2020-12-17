@@ -59,7 +59,7 @@ async fn main() -> std::io::Result<()> {
 pub async fn migrate() -> std::result::Result<(), sqlx::Error> {
     let app_data = Data::new().await;
 
-    sqlx::query!( " CREATE TABLE responses ( name VARCHAR(64) NOT NULL, email_id VARCHAR(40) NOT NULL UNIQUE, registration_number VARCHAR(30) NOT NULL UNIQUE, uuid  VARCHAR(30) NOT NULL UNIQUE PRIMARY KEY
+    sqlx::query!( " CREATE TABLE responses ( name VARCHAR(64) NOT NULL, email_id VARCHAR(40) NOT NULL UNIQUE, registration_number VARCHAR(30) NOT NULL UNIQUE, uuid  VARCHAR(90) NOT NULL UNIQUE PRIMARY KEY
 ) ",
     )
     .fetch_one(&app_data.db_pool)

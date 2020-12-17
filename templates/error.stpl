@@ -1,0 +1,15 @@
+<% include!("./top.stpl"); %>
+
+<title>Error | AIR Center</title>
+</head>
+  <body>
+
+<div class="container">
+    <div class="box response">
+		<h3>Error: <%= error %>, contact <a href="mailto:aravinth.19bce7415@vitap.ac.in">admin</a> if you think this error is stupid</h3>
+    </div>
+
+<% include!("./socials.stpl"); %>
+</div>
+
+<% include!("./bottom.stpl"); %>
