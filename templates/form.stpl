@@ -71,9 +71,9 @@
       </div>
     </div>
 
+<% include!("./socials.stpl"); %>
   </form>
 
-<% include!("./socials.stpl"); %>
 </div>
 
 <% include!("./bottom.stpl"); %>
