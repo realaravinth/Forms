@@ -1,5 +1,5 @@
 <div align="center">
-<img src="assets/logo.svg" alt="Wagon" width="180" height="160" />
+<img src="assets/logo.svg" alt="Forms Logo" width="180" height="160" />
 
 # Forms
 

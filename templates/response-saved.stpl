@@ -1,0 +1,14 @@
+<% include!("./top.stpl"); %>
+
+<% include!("./logo.stpl"); %>
+    <title>Saved | AIR Center</title>
+</head>
+  <body>
+
+<div class="container">
+    <div class="box response">
+        <h3>Thank you <%= name %>, your response is recorded</h3>
+    </div>
+</div>
+
+<% include!("./bottom.stpl"); %>

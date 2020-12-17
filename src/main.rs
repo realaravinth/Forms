@@ -15,6 +15,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+use actix_files::Files;
 use actix_web::{middleware, App, HttpServer};
 use pretty_env_logger;
 
@@ -29,6 +30,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .configure(routes::services)
+            .service(Files::new("/", "./static"))
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
             .wrap(middleware::NormalizePath::new(

@@ -16,6 +16,7 @@
 */
 
 use ammonia::clean;
+use sailfish_macros::*;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
@@ -23,12 +24,26 @@ use validator_derive::Validate;
 
 use crate::error::ServiceResult;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Debug, Default, Serialize, TemplateOnce)]
+#[template(path = "form.stpl")]
 pub struct FormData {
     pub email_id: String,
     pub name: String,
     pub registration_number: String,
 }
+
+#[derive(Debug, Default, TemplateOnce)]
+#[template(path = "response-saved.stpl")]
+pub struct Name<'a> {
+    pub name: &'a str,
+}
+
+impl<'a> Name<'a> {
+    pub fn new(name: &'a str) -> Self {
+        Name { name }
+    }
+}
+
 impl FormData {
     pub fn process(&self) -> ServiceResult<Candidate> {
         let candidate = Candidate::new()
@@ -38,6 +53,14 @@ impl FormData {
             .build();
 
         Ok(candidate)
+    }
+
+    pub fn empty() -> Self {
+        FormData {
+            name: " ".into(),
+            email_id: " ".into(),
+            registration_number: " ".into(),
+        }
     }
 }
 

@@ -16,22 +16,32 @@
 */
 
 use actix_web::{get, post, web, web::ServiceConfig, HttpResponse, Responder};
+use sailfish::TemplateOnce;
 
-use crate::error::ServiceResult;
-use crate::form::FormData;
+use crate::error::*;
+use crate::form::{FormData, Name};
 
 #[post("/")]
-async fn index(form: web::Form<FormData>) -> ServiceResult<impl Responder> {
-    let msg = format!("Welcome {}!", form.email_id);
-    Ok(HttpResponse::Ok().body(&msg))
+async fn post_form(form: web::Form<FormData>) -> ServiceResult<impl Responder> {
+    let body = Name::new(&form.name)
+        .render_once()
+        .map_err(|_| ServiceError::InternalServerError)?;
+    Ok(HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(body))
 }
 
-#[get("/hello")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello")
+#[get("/")]
+async fn get_form() -> ServiceResult<impl Responder> {
+    let body = FormData::default()
+        .render_once()
+        .map_err(|_| ServiceError::InternalServerError)?;
+    Ok(HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(body))
 }
 
 pub fn services(cfg: &mut ServiceConfig) {
-    cfg.service(index);
-    cfg.service(hello);
+    cfg.service(post_form);
+    cfg.service(get_form);
 }
